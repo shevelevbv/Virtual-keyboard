@@ -1,20 +1,14 @@
 class Key {
-  constructor(en, ru, changeCase) {
+  constructor(en, ru, isPrintable) {
     this.button = document.createElement('button');
     this.en = en;
     this.ru = ru;
-    this.language = 'en';
-    this.changeCase = changeCase;
+    this.isPrintable = isPrintable;
   }
 
   appendKey(element) {
     this.button.classList.add('keyboard__key');
-    this.setTextLanguage(this.language);
     element.append(this.button);
-  }
-
-  setLanguage(language) {
-    this.language = language;
   }
 
   setTextLanguage(language) {
@@ -26,7 +20,7 @@ class Key {
   }
 
   setCase(letterCase) {
-    if (this.changeCase === false) {
+    if (!this.isPrintable) {
       return;
     }
     if (letterCase === 'lower') {
@@ -39,6 +33,7 @@ class Key {
 
 let language = 'en';
 let lowerCase = true;
+let textAreaText = '';
 
 function setLocalStorage() {
   localStorage.setItem('shevelevbvLang', language);
@@ -50,7 +45,7 @@ function getLocalStorage() {
   }
 }
 
-window.addEventListener('load', getLocalStorage);
+getLocalStorage();
 
 const bodyWrapper = document.createElement('div');
 bodyWrapper.classList.add('body-wrapper');
@@ -81,21 +76,22 @@ const keyboardRuLetters = [
   'ё', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace',
   'Tab', 'й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ', '\\', 'Del',
   'CapsLock', 'ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э', 'Enter',
-  'Shift', 'я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', '?', '&#25B2;', 'Shift',
-  'Ctrl', 'Alt', 'Cmd', ' ', 'Cmd', '&#25C0;', '&#25BC;', '&#25B6;', 'Ctrl'];
+  'Shift', 'я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', '?', '&#x25B2;', 'Shift',
+  'Ctrl', 'Alt', 'Cmd', ' ', 'Cmd', '&#x25C0;', '&#x25BC;', '&#x25B6;', 'Ctrl'];
 
-const keyboardChangeCase = [
-  true, false, false, false, false, false, false, false, false, false, false, false, false, false,
-  false, true, true, true, true, true, true, true, true, true, true, true, true, false, false,
+const keyboardIsPrintable = [
+  true, true, true, true, true, true, true, true, true, true, true, true, true, false,
+  false, true, true, true, true, true, true, true, true, true, true, true, true, true, false,
   false, true, true, true, true, true, true, true, true, true, true, true, false,
-  false, true, true, true, true, true, true, true, true, true, false, false, false,
-  false, false, false, false, false, false, false, false, false];
+  false, true, true, true, true, true, true, true, true, true, true, false, false,
+  false, false, false, true, false, false, false, false, false];
 
 const keys = [];
 let row = document.createElement('div');
 row.classList.add('keyboard__row');
 for (let i = 0; i < keyboardEnLetters.length; i += 1) {
-  const key = new Key(keyboardEnLetters[i], keyboardRuLetters[i], keyboardChangeCase[i]);
+  const key = new Key(keyboardEnLetters[i], keyboardRuLetters[i], keyboardIsPrintable[i]);
+  key.setTextLanguage(language);
   keys.push(key);
   key.appendKey(row);
   if (i === 13 || i === 28 || i === 41 || i === 54 || i === keyboardEnLetters.length - 1) {
@@ -140,20 +136,52 @@ const arrowDownKey = keys[61];
 arrowDownKey.button.classList.add('keyboard__key--functional');
 const arrowRightKey = keys[62];
 arrowRightKey.button.classList.add('keyboard__key--functional');
-const rightCtrlKey = keys[62];
+const rightCtrlKey = keys[63];
 rightCtrlKey.button.classList.add('keyboard__key--functional');
 
 document.body.append(bodyWrapper);
 
-capsLockKey.button.addEventListener('click', () => {
-  if (lowerCase) {
-    keys.forEach((key) => key.setCase('upper'));
-    lowerCase = false;
-  } else {
-    keys.forEach((key) => key.setCase('lower'));
-    lowerCase = true;
-  }
-  capsLockKey.button.classList.toggle('keyboard__key--pressed');
+keys.forEach((key) => {
+  key.button.addEventListener('click', () => {
+    if (key.isPrintable) {
+      textAreaText += key.button.innerHTML;
+      textArea.value = textAreaText;
+      textArea.focus();
+    } else if (key === capsLockKey) {
+      if (lowerCase) {
+        keys.forEach((key) => key.setCase('upper'));
+        lowerCase = false;
+      } else {
+        keys.forEach((key) => key.setCase('lower'));
+        lowerCase = true;
+      }
+      capsLockKey.button.classList.toggle('keyboard__key--pressed');
+    } else if (key === backSpaceKey) {
+      textAreaText = textArea.value.substring(0, textArea.value.length - 1);
+      textArea.value = textAreaText;
+      textArea.focus();
+    } else if (key === enterKey) {
+      textAreaText += '\n';
+      textArea.value = textAreaText;
+      textArea.focus();
+    } else if (key === tabKey) {
+      textAreaText += '\t';
+      textArea.value = textAreaText;
+      textArea.focus();
+    } else if (key === rightCtrlKey) {
+      if (language === 'en') {
+        language = 'ru';
+      } else {
+        language = 'en';
+      }
+      keys.forEach((button) => {
+        button.setTextLanguage(language);
+        if (capsLockKey.button.classList.contains('keyboard__key--pressed')) {
+          keys.forEach((keyboardButton) => keyboardButton.setCase('upper'));
+        }
+      });
+    }
+  });
 });
 
-window.addEventListener('beforeUnload', setLocalStorage);
+window.addEventListener('beforeunload', setLocalStorage);
