@@ -60,26 +60,26 @@ textArea.autofocus = 'autofocus';
 const text1 = document.createElement('p');
 text1.textContent = 'Клавиатура создана в операционной системе macOS';
 const text2 = document.createElement('p');
-text2.textContent = 'Для переключения языка используйте комбинацию: Cmd + Space';
+text2.textContent = 'Для переключения языка используйте комбинацию: Ctrl + Shift';
 const keyboard = document.createElement('div');
 keyboard.classList.add('keyboard');
 const keyboardKeys = document.createElement('div');
 keyboardKeys.classList.add('keyboard__keys');
-const keyboardEnLetters = [
-  '`', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace',
+const enLetters = [
+  '§', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace',
   'Tab', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\\', 'Del',
   'CapsLock', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', 'Enter',
   'Shift', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', '&#x25B2;', 'Shift',
-  'Ctrl', 'Alt', 'Cmd', ' ', 'Cmd', '&#x25C0;', '&#x25BC;', '&#x25B6;', 'Ctrl'];
+  'Ctrl', 'Alt', 'Cmd', ' ', 'Cmd', '&#x25C0;', '&#x25BC;', '&#x25B6;', 'Alt'];
 
-const keyboardRuLetters = [
-  'ё', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace',
-  'Tab', 'й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ', '\\', 'Del',
+const ruLetters = [
+  '&gt;', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace',
+  'Tab', 'й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ', 'ё', 'Del',
   'CapsLock', 'ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э', 'Enter',
   'Shift', 'я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', '?', '&#x25B2;', 'Shift',
-  'Ctrl', 'Alt', 'Cmd', ' ', 'Cmd', '&#x25C0;', '&#x25BC;', '&#x25B6;', 'Ctrl'];
+  'Ctrl', 'Alt', 'Cmd', ' ', 'Cmd', '&#x25C0;', '&#x25BC;', '&#x25B6;', 'Alt'];
 
-const keyboardIsPrintable = [
+const isPrintable = [
   true, true, true, true, true, true, true, true, true, true, true, true, true, false,
   false, true, true, true, true, true, true, true, true, true, true, true, true, true, false,
   false, true, true, true, true, true, true, true, true, true, true, true, false,
@@ -89,12 +89,12 @@ const keyboardIsPrintable = [
 const keys = [];
 let row = document.createElement('div');
 row.classList.add('keyboard__row');
-for (let i = 0; i < keyboardEnLetters.length; i += 1) {
-  const key = new Key(keyboardEnLetters[i], keyboardRuLetters[i], keyboardIsPrintable[i]);
+for (let i = 0; i < enLetters.length; i += 1) {
+  const key = new Key(enLetters[i], ruLetters[i], isPrintable[i]);
   key.setTextLanguage(language);
   keys.push(key);
   key.appendKey(row);
-  if (i === 13 || i === 28 || i === 41 || i === 54 || i === keyboardEnLetters.length - 1) {
+  if (i === 13 || i === 28 || i === 41 || i === 54 || i === enLetters.length - 1) {
     keyboardKeys.append(row);
     row = document.createElement('div');
     row.classList.add('keyboard__row');
@@ -136,8 +136,8 @@ const arrowDownKey = keys[61];
 arrowDownKey.button.classList.add('keyboard__key--functional');
 const arrowRightKey = keys[62];
 arrowRightKey.button.classList.add('keyboard__key--functional');
-const rightCtrlKey = keys[63];
-rightCtrlKey.button.classList.add('keyboard__key--functional');
+const rightAltKey = keys[63];
+rightAltKey.button.classList.add('keyboard__key--functional');
 
 document.body.append(bodyWrapper);
 
@@ -149,10 +149,10 @@ keys.forEach((key) => {
       textArea.focus();
     } else if (key === capsLockKey) {
       if (lowerCase) {
-        keys.forEach((key) => key.setCase('upper'));
+        keys.forEach((button) => button.setCase('upper'));
         lowerCase = false;
       } else {
-        keys.forEach((key) => key.setCase('lower'));
+        keys.forEach((button) => button.setCase('lower'));
         lowerCase = true;
       }
       capsLockKey.button.classList.toggle('keyboard__key--pressed');
@@ -168,20 +168,52 @@ keys.forEach((key) => {
       textAreaText += '\t';
       textArea.value = textAreaText;
       textArea.focus();
-    } else if (key === rightCtrlKey) {
-      if (language === 'en') {
-        language = 'ru';
-      } else {
-        language = 'en';
-      }
-      keys.forEach((button) => {
-        button.setTextLanguage(language);
-        if (capsLockKey.button.classList.contains('keyboard__key--pressed')) {
-          keys.forEach((keyboardButton) => keyboardButton.setCase('upper'));
-        }
-      });
     }
   });
+});
+
+document.addEventListener('keydown', (event) => {
+  event.preventDefault();
+  const keyCode = event.code;
+  if (keyCode === 'Backspace') {
+    textAreaText = textArea.value.substring(0, textArea.value.length - 1);
+    textArea.value = textAreaText;
+    textArea.focus();
+    backSpaceKey.button.classList.add('keyboard__key--pressed');
+  } else if (keyCode === 'Enter') {
+    textAreaText += '\n';
+    textArea.value = textAreaText;
+    textArea.focus();
+    enterKey.button.classList.add('keyboard__key--pressed');
+  } else if (keyCode === 'Tab') {
+    textAreaText += '\t';
+    textArea.value = textAreaText;
+    textArea.focus();
+    tabKey.button.classList.add('keyboard__key--pressed');
+  } else if (event.ctrlKey && event.shiftKey) {
+    if (language === 'en') {
+      language = 'ru';
+    } else {
+      language = 'en';
+    }
+    keys.forEach((button) => {
+      button.setTextLanguage(language);
+      if (capsLockKey.button.classList.contains('keyboard__key--pressed')) {
+        keys.forEach((keyboardButton) => keyboardButton.setCase('upper'));
+      }
+    });
+  }
+});
+
+document.addEventListener('keyup', (event) => {
+  const keyCode = event.key;
+  if (keyCode === 'Backspace') {
+    backSpaceKey.button.classList.remove('keyboard__key--pressed');
+  } else if (keyCode === 'Enter') {
+    enterKey.button.classList.remove('keyboard__key--pressed');
+  } else if (keyCode === 'Tab') {
+    tabKey.button.classList.remove('keyboard__key--pressed');
+  }
 });
 
 window.addEventListener('beforeunload', setLocalStorage);
