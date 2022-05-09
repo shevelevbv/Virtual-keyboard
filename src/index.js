@@ -1,10 +1,11 @@
 class Key {
-  constructor(en, ru, enShift, ruShift, isPrintable) {
+  constructor(en, ru, enShift, ruShift, code, isPrintable) {
     this.button = document.createElement('button');
     this.en = en;
     this.enShift = enShift;
     this.ru = ru;
     this.ruShift = ruShift;
+    this.code = code;
     this.isPrintable = isPrintable;
   }
 
@@ -42,7 +43,6 @@ class Key {
 }
 
 let language = 'en';
-let capsLockOn = false;
 let lowerCase = true;
 let textAreaText = '';
 
@@ -91,18 +91,25 @@ const enShift = [
   'Ctrl', 'Alt', 'Cmd', ' ', 'Cmd', '&#x25C0;', '&#x25BC;', '&#x25B6;', 'Alt'];
 
 const ruLetters = [
-  '&gt;', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace',
+  '~', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace',
   'Tab', 'й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ', 'ё', 'Del',
   'CapsLock', 'ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э', 'Enter',
   'Shift', 'я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', '?', '&#x25B2;', 'Shift',
   'Ctrl', 'Alt', 'Cmd', ' ', 'Cmd', '&#x25C0;', '&#x25BC;', '&#x25B6;', 'Alt'];
 
 const ruShift = [
-  '&lt;', '!', '"', '№', '%', ':', ',', '.', ';', '(', ')', '_', '+', 'Backspace',
+  '`', '!', '"', '№', '%', ':', ',', '.', ';', '(', ')', '_', '+', 'Backspace',
   'Tab', 'й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ъ', 'ё', 'Del',
   'CapsLock', 'ф', 'ы', 'в', 'а', 'п', 'р', 'о', 'л', 'д', 'ж', 'э', 'Enter',
   'Shift', 'я', 'ч', 'с', 'м', 'и', 'т', 'ь', 'б', 'ю', '?', '&#x25B2;', 'Shift',
   'Ctrl', 'Alt', 'Cmd', ' ', 'Cmd', '&#x25C0;', '&#x25BC;', '&#x25B6;', 'Alt'];
+
+const code = [
+  'Backquote', 'Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6', 'Digit7', 'Digit8', 'Digit9', 'Digit0', 'Minus', 'Equal', 'Backspace',
+  'Tab', 'KeyQ', 'KeyW', 'KeyE', 'KeyR', 'KeyT', 'KeyY', 'KeyU', 'KeyI', 'KeyO', 'KeyP', 'BracketLeaft', 'BracketRight', 'Backslash', 'Delete',
+  'CapsLock', 'KeyA', 'KeyS', 'KeyD', 'KeyF', 'KeyG', 'KeyH', 'KeyJ', 'KeyK', 'KeyL', 'Semicolon', 'Quote', 'Enter',
+  'ShiftLeft', 'KeyZ', 'KeyX', 'KeyC', 'KeyV', 'KeyB', 'KeyN', 'KeyM', 'Comma', 'Period', 'Slash', 'ArrowUp', 'ShiftRight',
+  'ControlLeft', 'AltLeft', 'MetaLeft', 'Space', 'MetaRight', 'ArrowLeft', 'ArrowDown', 'ArrowRight', 'AltRight'];
 
 const isPrintable = [
   true, true, true, true, true, true, true, true, true, true, true, true, true, false,
@@ -115,7 +122,7 @@ const keys = [];
 let row = document.createElement('div');
 row.classList.add('keyboard__row');
 for (let i = 0; i < enLetters.length; i += 1) {
-  const key = new Key(enLetters[i], ruLetters[i], enShift[i], ruShift[i], isPrintable[i]);
+  const key = new Key(enLetters[i], ruLetters[i], enShift[i], ruShift[i], code[i], isPrintable[i]);
   key.setTextLanguage(language);
   keys.push(key);
   key.appendKey(row);
@@ -169,7 +176,7 @@ document.body.append(bodyWrapper);
 keys.forEach((key) => {
   key.button.addEventListener('click', () => {
     if (key.isPrintable) {
-      textAreaText += key.button.innerHTML;
+      textAreaText += key.button.textContent;
       textArea.value = textAreaText;
     } else if (key === capsLockKey) {
       if (lowerCase) {
@@ -197,18 +204,16 @@ keys.forEach((key) => {
 
 document.addEventListener('keydown', (event) => {
   event.preventDefault();
-  const keyCode = event.key;
-  if (keyCode === 'Control') {
+  const keyCode = event.code;
+  if (keyCode === 'ControlLeft') {
     leftCtrlKey.button.classList.add('keyboard__key--pressed');
-  }
-  if (keyCode === 'Alt') {
-    if (event.location === KeyboardEvent.DOM_KEY_LOCATION_LEFT) {
+  } else if (keyCode === 'AltLeft' || keyCode === 'AltRight') {
+    if (keyCode === 'AltLeft') {
       leftAltKey.button.classList.add('keyboard__key--pressed');
-    } else {
+    } else if (keyCode === 'AltRight') {
       rightAltKey.button.classList.add('keyboard__key--pressed');
     }
-  }
-  if (keyCode === 'Backspace') {
+  } else if (keyCode === 'Backspace') {
     textAreaText = textArea.value.substring(0, textArea.value.length - 1);
     textArea.value = textAreaText;
     backSpaceKey.button.classList.add('keyboard__key--pressed');
@@ -229,17 +234,16 @@ document.addEventListener('keydown', (event) => {
       lowerCase = true;
     }
     capsLockKey.button.classList.toggle('keyboard__key--pressed');
-    capsLockOn = capsLockKey.button.classList.contains('keyboard__key--pressed');
   } else if (keyCode === 'Delete') {
     delKey.button.classList.add('keyboard__key--pressed');
-  } else if (keyCode === 'Meta') {
-    if (event.location === KeyboardEvent.DOM_KEY_LOCATION_LEFT) {
+  } else if (keyCode === 'MetaLeft' || keyCode === 'MetaRight') {
+    if (keyCode === 'MetaLeft') {
       leftCmdKey.button.classList.add('keyboard__key--pressed');
     } else {
       rightCmdKey.button.classList.add('keyboard__key--pressed');
     }
-  } else if (keyCode === 'Shift') {
-    if (event.location === KeyboardEvent.DOM_KEY_LOCATION_LEFT) {
+  } else if (keyCode === 'ShiftLeft' || keyCode === 'ShiftRight') {
+    if (keyCode === 'ShiftLeft') {
       leftShiftKey.button.classList.add('keyboard__key--pressed');
     } else {
       rightShiftKey.button.classList.add('keyboard__key--pressed');
@@ -260,7 +264,14 @@ document.addEventListener('keydown', (event) => {
     arrowDownKey.button.classList.add('keyboard__key--pressed');
   } else if (keyCode === 'ArrowRight') {
     arrowRightKey.button.classList.add('keyboard__key--pressed');
-  } else if (event.ctrlKey && event.altKey) {
+  } else if (code.includes(keyCode)) {
+    const selectedKey = keys.filter((key) => key.code === keyCode);
+    selectedKey[0].button.classList.add('keyboard__key--pressed');
+    textAreaText += selectedKey[0].button.textContent;
+    textArea.value = textAreaText;
+  }
+
+  if (event.ctrlKey && event.altKey) {
     if (language === 'en') {
       language = 'ru';
     } else {
@@ -273,22 +284,21 @@ document.addEventListener('keydown', (event) => {
       }
     });
   }
+
   textArea.focus();
 });
 
 document.addEventListener('keyup', (event) => {
-  const keyCode = event.key;
-  if (keyCode === 'Control') {
+  const keyCode = event.code;
+  if (keyCode === 'ControlLeft') {
     leftCtrlKey.button.classList.remove('keyboard__key--pressed');
-  }
-  if (keyCode === 'Alt') {
-    if (event.location === KeyboardEvent.DOM_KEY_LOCATION_LEFT) {
+  } else if (keyCode === 'AltLeft' || keyCode === 'AltRight') {
+    if (keyCode === 'AltLeft') {
       leftAltKey.button.classList.remove('keyboard__key--pressed');
-    } else {
+    } else if (keyCode === 'AltRight') {
       rightAltKey.button.classList.remove('keyboard__key--pressed');
     }
-  }
-  if (keyCode === 'Backspace') {
+  } else if (keyCode === 'Backspace') {
     backSpaceKey.button.classList.remove('keyboard__key--pressed');
   } else if (keyCode === 'Enter') {
     enterKey.button.classList.remove('keyboard__key--pressed');
@@ -296,14 +306,14 @@ document.addEventListener('keyup', (event) => {
     tabKey.button.classList.remove('keyboard__key--pressed');
   } else if (keyCode === 'Delete') {
     delKey.button.classList.remove('keyboard__key--pressed');
-  } else if (keyCode === 'Meta') {
-    if (event.location === KeyboardEvent.DOM_KEY_LOCATION_LEFT) {
+  } else if (keyCode === 'MetaLeft' || keyCode === 'MetaRight') {
+    if (keyCode === 'MetaLeft') {
       leftCmdKey.button.classList.remove('keyboard__key--pressed');
     } else {
       rightCmdKey.button.classList.remove('keyboard__key--pressed');
     }
-  } else if (keyCode === 'Shift') {
-    if (event.location === KeyboardEvent.DOM_KEY_LOCATION_LEFT) {
+  } else if (keyCode === 'ShiftLeft' || keyCode === 'ShiftRight') {
+    if (keyCode === 'ShiftLeft') {
       leftShiftKey.button.classList.remove('keyboard__key--pressed');
     } else {
       rightShiftKey.button.classList.remove('keyboard__key--pressed');
@@ -324,6 +334,9 @@ document.addEventListener('keyup', (event) => {
     arrowDownKey.button.classList.remove('keyboard__key--pressed');
   } else if (keyCode === 'ArrowRight') {
     arrowRightKey.button.classList.remove('keyboard__key--pressed');
+  } else if (code.includes(keyCode) && keyCode !== 'CapsLock') {
+    const selectedKey = keys.filter((key) => key.code === keyCode);
+    selectedKey[0].button.classList.remove('keyboard__key--pressed');
   }
 });
 
