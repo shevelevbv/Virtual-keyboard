@@ -173,11 +173,29 @@ rightAltKey.button.classList.add('keyboard__key--functional');
 
 document.body.append(bodyWrapper);
 
+capsLockKey.button.addEventListener('click', () => {
+  capsLockKey.button.classList.toggle('keyboard__key--pressed');
+});
+
 keys.forEach((key) => {
   key.button.addEventListener('click', () => {
     if (key.isPrintable) {
-      textAreaText += key.button.textContent;
+      const start = textArea.selectionStart;
+      const end = textArea.selectionEnd;
+      const textStart = textAreaText.substring(0, start);
+      const newText = key.button.textContent;
+      const textEnd = textAreaText.substring(end, textAreaText.length);
+      textAreaText = textStart + newText + textEnd;
       textArea.value = textAreaText;
+      textArea.setSelectionRange(start + 1, start + 1);
+    } else if (key === delKey) {
+      const start = textArea.selectionStart;
+      const end = textArea.selectionEnd;
+      const textStart = textAreaText.substring(0, start);
+      const textEnd = textAreaText.substring(end + 1, textAreaText.length);
+      textAreaText = textStart + textEnd;
+      textArea.value = textAreaText;
+      textArea.setSelectionRange(start, start);
     } else if (key === capsLockKey) {
       if (lowerCase) {
         keys.forEach((button) => button.setCase('upper'));
@@ -186,19 +204,41 @@ keys.forEach((key) => {
         keys.forEach((button) => button.setCase('lower'));
         lowerCase = true;
       }
-      capsLockKey.button.classList.toggle('keyboard__key--pressed');
-      capsLockOn = capsLockKey.button.classList.contains('keyboard__key--pressed');
     } else if (key === backSpaceKey) {
-      textAreaText = textArea.value.substring(0, textArea.value.length - 1);
-      textArea.value = textAreaText;
+      const start = textArea.selectionStart;
+      const end = textArea.selectionEnd;
+      if (start > 0) {
+        const textStart = textAreaText.substring(0, start - 1);
+        const textEnd = textAreaText.substring(end, textAreaText.length);
+        textAreaText = textStart + textEnd;
+        textArea.value = textAreaText;
+        textArea.setSelectionRange(start - 1, start - 1);
+        textArea.value = textAreaText;
+      }
     } else if (key === enterKey) {
       textAreaText += '\n';
       textArea.value = textAreaText;
     } else if (key === tabKey) {
       textAreaText += '\t';
       textArea.value = textAreaText;
+    } else if (key === arrowLeftKey) {
+      const start = textArea.selectionStart;
+      if (start !== 0) {
+        textArea.setSelectionRange(start - 1, start - 1);
+      }
+    } else if (key === arrowRightKey) {
+      const start = textArea.selectionStart;
+      if (start !== textArea.value.length) {
+        textArea.setSelectionRange(start + 1, start + 1);
+      }
     }
     textArea.focus();
+    if (key !== capsLockKey && key !== leftCtrlKey) {
+      key.button.classList.add('keyboard__key--pressed');
+      key.button.addEventListener('animationend', () => {
+        key.button.classList.remove('keyboard__key--pressed');
+      });
+    }
   });
 });
 
@@ -214,8 +254,16 @@ document.addEventListener('keydown', (event) => {
       rightAltKey.button.classList.add('keyboard__key--pressed');
     }
   } else if (keyCode === 'Backspace') {
-    textAreaText = textArea.value.substring(0, textArea.value.length - 1);
-    textArea.value = textAreaText;
+    const start = textArea.selectionStart;
+    const end = textArea.selectionEnd;
+    if (start > 0) {
+      const textStart = textAreaText.substring(0, start - 1);
+      const textEnd = textAreaText.substring(end, textAreaText.length);
+      textAreaText = textStart + textEnd;
+      textArea.value = textAreaText;
+      textArea.setSelectionRange(start - 1, start - 1);
+      textArea.value = textAreaText;
+    }
     backSpaceKey.button.classList.add('keyboard__key--pressed');
   } else if (keyCode === 'Enter') {
     textAreaText += '\n';
@@ -260,15 +308,29 @@ document.addEventListener('keydown', (event) => {
     arrowUpKey.button.classList.add('keyboard__key--pressed');
   } else if (keyCode === 'ArrowLeft') {
     arrowLeftKey.button.classList.add('keyboard__key--pressed');
+    const start = textArea.selectionStart;
+    if (start !== 0) {
+      textArea.setSelectionRange(start - 1, start - 1);
+    }
   } else if (keyCode === 'ArrowDown') {
     arrowDownKey.button.classList.add('keyboard__key--pressed');
   } else if (keyCode === 'ArrowRight') {
     arrowRightKey.button.classList.add('keyboard__key--pressed');
+    const start = textArea.selectionStart;
+    if (start !== textArea.value.length) {
+      textArea.setSelectionRange(start + 1, start + 1);
+    }
   } else if (code.includes(keyCode)) {
     const selectedKey = keys.filter((key) => key.code === keyCode);
     selectedKey[0].button.classList.add('keyboard__key--pressed');
-    textAreaText += selectedKey[0].button.textContent;
+    const start = textArea.selectionStart;
+    const end = textArea.selectionEnd;
+    const textStart = textAreaText.substring(0, start);
+    const newText = selectedKey[0].button.textContent;
+    const textEnd = textAreaText.substring(end, textAreaText.length);
+    textAreaText = textStart + newText + textEnd;
     textArea.value = textAreaText;
+    textArea.setSelectionRange(start + 1, start + 1);
   }
 
   if (event.ctrlKey && event.altKey) {
@@ -284,7 +346,6 @@ document.addEventListener('keydown', (event) => {
       }
     });
   }
-
   textArea.focus();
 });
 
