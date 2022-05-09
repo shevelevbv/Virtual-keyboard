@@ -80,7 +80,7 @@ p {
   background-color: #023c89;
   cursor: pointer;
   animation: button-grow 0.3s forwards;
-  transition: background-color 0.3s;
+  transition: all 0.3s;
 }
 
 .keyboard__key:hover {
@@ -126,7 +126,7 @@ p {
   animation: button-shrink 0.3s forwards;
 }
 
-.keyboard__key--hel {
+.keyboard__key--held {
   transform: scale(0.9);
   background-color: #a72cb7;
   transition: all 0.3s;

@@ -115,12 +115,13 @@ const isPrintable = [
   true, true, true, true, true, true, true, true, true, true, true, true, true, false,
   false, true, true, true, true, true, true, true, true, true, true, true, true, true, false,
   false, true, true, true, true, true, true, true, true, true, true, true, false,
-  false, true, true, true, true, true, true, true, true, true, true, false, false,
-  false, false, false, true, false, false, false, false, false];
+  false, true, true, true, true, true, true, true, true, true, true, true, false,
+  false, false, false, true, false, true, true, true, false];
 
 const keys = [];
 let row = document.createElement('div');
 row.classList.add('keyboard__row');
+
 for (let i = 0; i < enLetters.length; i += 1) {
   const key = new Key(enLetters[i], ruLetters[i], enShift[i], ruShift[i], code[i], isPrintable[i]);
   key.setTextLanguage(language);
@@ -216,11 +217,23 @@ keys.forEach((key) => {
         textArea.value = textAreaText;
       }
     } else if (key === enterKey) {
-      textAreaText += '\n';
+      const start = textArea.selectionStart;
+      const end = textArea.selectionEnd;
+      const textStart = textAreaText.substring(0, start);
+      const newText = '\n';
+      const textEnd = textAreaText.substring(end, textAreaText.length);
+      textAreaText = textStart + newText + textEnd;
       textArea.value = textAreaText;
+      textArea.setSelectionRange(start + 1, start + 1);
     } else if (key === tabKey) {
-      textAreaText += '\t';
+      const start = textArea.selectionStart;
+      const end = textArea.selectionEnd;
+      const textStart = textAreaText.substring(0, start);
+      const newText = '\t';
+      const textEnd = textAreaText.substring(end, textAreaText.length);
+      textAreaText = textStart + newText + textEnd;
       textArea.value = textAreaText;
+      textArea.setSelectionRange(start + 1, start + 1);
     } else if (key === arrowLeftKey) {
       const start = textArea.selectionStart;
       if (start !== 0) {
@@ -231,9 +244,9 @@ keys.forEach((key) => {
       if (start !== textArea.value.length) {
         textArea.setSelectionRange(start + 1, start + 1);
       }
-    }
+    } 
     textArea.focus();
-    if (key !== capsLockKey && key !== leftCtrlKey) {
+    if (key !== capsLockKey) {
       key.button.classList.add('keyboard__key--pressed');
       key.button.addEventListener('animationend', () => {
         key.button.classList.remove('keyboard__key--pressed');
@@ -266,12 +279,24 @@ document.addEventListener('keydown', (event) => {
     }
     backSpaceKey.button.classList.add('keyboard__key--pressed');
   } else if (keyCode === 'Enter') {
-    textAreaText += '\n';
+    const start = textArea.selectionStart;
+    const end = textArea.selectionEnd;
+    const textStart = textAreaText.substring(0, start);
+    const newText = '\n';
+    const textEnd = textAreaText.substring(end, textAreaText.length);
+    textAreaText = textStart + newText + textEnd;
     textArea.value = textAreaText;
+    textArea.setSelectionRange(start + 1, start + 1);
     enterKey.button.classList.add('keyboard__key--pressed');
   } else if (keyCode === 'Tab') {
-    textAreaText += '\t';
+    const start = textArea.selectionStart;
+    const end = textArea.selectionEnd;
+    const textStart = textAreaText.substring(0, start);
+    const newText = '\t';
+    const textEnd = textAreaText.substring(end, textAreaText.length);
+    textAreaText = textStart + newText + textEnd;
     textArea.value = textAreaText;
+    textArea.setSelectionRange(start + 1, start + 1);
     tabKey.button.classList.add('keyboard__key--pressed');
   } else if (keyCode === 'CapsLock') {
     if (lowerCase) {
@@ -303,22 +328,6 @@ document.addEventListener('keydown', (event) => {
     } else {
       keys.forEach((button) => button.setCase('lower'));
       lowerCase = true;
-    }
-  } else if (keyCode === 'ArrowUp') {
-    arrowUpKey.button.classList.add('keyboard__key--pressed');
-  } else if (keyCode === 'ArrowLeft') {
-    arrowLeftKey.button.classList.add('keyboard__key--pressed');
-    const start = textArea.selectionStart;
-    if (start !== 0) {
-      textArea.setSelectionRange(start - 1, start - 1);
-    }
-  } else if (keyCode === 'ArrowDown') {
-    arrowDownKey.button.classList.add('keyboard__key--pressed');
-  } else if (keyCode === 'ArrowRight') {
-    arrowRightKey.button.classList.add('keyboard__key--pressed');
-    const start = textArea.selectionStart;
-    if (start !== textArea.value.length) {
-      textArea.setSelectionRange(start + 1, start + 1);
     }
   } else if (code.includes(keyCode)) {
     const selectedKey = keys.filter((key) => key.code === keyCode);
@@ -387,14 +396,6 @@ document.addEventListener('keyup', (event) => {
       keys.forEach((button) => button.setCase('lower'));
       lowerCase = true;
     }
-  } else if (keyCode === 'ArrowUp') {
-    arrowUpKey.button.classList.remove('keyboard__key--pressed');
-  } else if (keyCode === 'ArrowLeft') {
-    arrowLeftKey.button.classList.remove('keyboard__key--pressed');
-  } else if (keyCode === 'ArrowDown') {
-    arrowDownKey.button.classList.remove('keyboard__key--pressed');
-  } else if (keyCode === 'ArrowRight') {
-    arrowRightKey.button.classList.remove('keyboard__key--pressed');
   } else if (code.includes(keyCode) && keyCode !== 'CapsLock') {
     const selectedKey = keys.filter((key) => key.code === keyCode);
     selectedKey[0].button.classList.remove('keyboard__key--pressed');
