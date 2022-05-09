@@ -244,7 +244,7 @@ keys.forEach((key) => {
       if (start !== textArea.value.length) {
         textArea.setSelectionRange(start + 1, start + 1);
       }
-    } 
+    }
     textArea.focus();
     if (key !== capsLockKey) {
       key.button.classList.add('keyboard__key--pressed');
