@@ -1,0 +1,133 @@
+@font-face {
+  font-family: 'Lato';
+  src: url('./fonts/Lato/Lato-Regular.ttf');
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: 'Lato', sans-serif;
+  font-size: 20px;
+  color: white;
+}
+
+body {
+  min-height: 100vh;
+}
+
+h1 {
+  color: black;
+  font-size: 40px;
+}
+
+textarea {
+  border-radius: 5px;
+  color: black;
+  padding: 10px;
+  outline: none;
+  resize: none;
+}
+
+p {
+  color: black;
+  font-size: 10px;
+}
+
+.body-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.keyboard {
+  width: 800px;
+  background-color: #b9d4f5;
+  border-radius: 5px;
+  border: 5px solid black;
+}
+
+.keyboard__keys {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+}
+
+.keyboard__row {
+  display: flex;
+  justify-content: space-between;
+}
+
+@keyframes button-grow {
+  from {
+    transform: scale(90%);
+    background-color: #a72cb7;
+  }
+  to {
+    transform: scale(100%);
+  }
+}
+
+.keyboard__key {
+  width: 45px;
+  height: 45px;
+  border-radius: 3px;
+  border: none;
+  outline: none;
+  background-color: #023c89;
+  cursor: pointer;
+  animation: button-grow 0.3s forwards;
+  transition: background-color 0.3s;
+}
+
+.keyboard__key:hover {
+  background-color: #a72cb7;
+  transition: background-color 0.3s;
+}
+
+.keyboard__key--backspace {
+  width: 110px;
+}
+
+.keyboard__key--tab {
+  width: 56px;
+}
+
+.keyboard__key--wide {
+  width: 115px;
+}
+
+.keyboard__key--wider {
+  width: 97px;
+}
+
+.keyboard__key--space {
+  width: 365px;
+}
+
+.keyboard__key--functional {
+  background-color: #01337d;
+}
+
+@keyframes button-shrink {
+  from {
+    transform: scale(100%);
+  }
+  to {
+    transform: scale(90%);
+    background-color: #a72cb7;
+  }
+}
+
+.keyboard__key--pressed {
+  animation: button-shrink 0.3s forwards;
+}
+
+.keyboard__key--hel {
+  transform: scale(0.9);
+  background-color: #a72cb7;
+  transition: all 0.3s;
+}
