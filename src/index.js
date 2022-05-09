@@ -175,7 +175,7 @@ rightAltKey.button.classList.add('keyboard__key--functional');
 document.body.append(bodyWrapper);
 
 capsLockKey.button.addEventListener('click', () => {
-  capsLockKey.button.classList.toggle('keyboard__key--pressed');
+  capsLockKey.button.classList.toggle('keyboard__key--held');
 });
 
 keys.forEach((key) => {
@@ -259,12 +259,12 @@ document.addEventListener('keydown', (event) => {
   event.preventDefault();
   const keyCode = event.code;
   if (keyCode === 'ControlLeft') {
-    leftCtrlKey.button.classList.add('keyboard__key--pressed');
+    leftCtrlKey.button.classList.add('keyboard__key--held');
   } else if (keyCode === 'AltLeft' || keyCode === 'AltRight') {
     if (keyCode === 'AltLeft') {
-      leftAltKey.button.classList.add('keyboard__key--pressed');
+      leftAltKey.button.classList.add('keyboard__key--held');
     } else if (keyCode === 'AltRight') {
-      rightAltKey.button.classList.add('keyboard__key--pressed');
+      rightAltKey.button.classList.add('keyboard__key--held');
     }
   } else if (keyCode === 'Backspace') {
     const start = textArea.selectionStart;
@@ -277,7 +277,7 @@ document.addEventListener('keydown', (event) => {
       textArea.setSelectionRange(start - 1, start - 1);
       textArea.value = textAreaText;
     }
-    backSpaceKey.button.classList.add('keyboard__key--pressed');
+    backSpaceKey.button.classList.add('keyboard__key--held');
   } else if (keyCode === 'Enter') {
     const start = textArea.selectionStart;
     const end = textArea.selectionEnd;
@@ -287,7 +287,7 @@ document.addEventListener('keydown', (event) => {
     textAreaText = textStart + newText + textEnd;
     textArea.value = textAreaText;
     textArea.setSelectionRange(start + 1, start + 1);
-    enterKey.button.classList.add('keyboard__key--pressed');
+    enterKey.button.classList.add('keyboard__key--held');
   } else if (keyCode === 'Tab') {
     const start = textArea.selectionStart;
     const end = textArea.selectionEnd;
@@ -297,7 +297,7 @@ document.addEventListener('keydown', (event) => {
     textAreaText = textStart + newText + textEnd;
     textArea.value = textAreaText;
     textArea.setSelectionRange(start + 1, start + 1);
-    tabKey.button.classList.add('keyboard__key--pressed');
+    tabKey.button.classList.add('keyboard__key--held');
   } else if (keyCode === 'CapsLock') {
     if (lowerCase) {
       keys.forEach((button) => button.setCase('upper'));
@@ -306,20 +306,20 @@ document.addEventListener('keydown', (event) => {
       keys.forEach((button) => button.setCase('lower'));
       lowerCase = true;
     }
-    capsLockKey.button.classList.toggle('keyboard__key--pressed');
+    capsLockKey.button.classList.toggle('keyboard__key--held');
   } else if (keyCode === 'Delete') {
-    delKey.button.classList.add('keyboard__key--pressed');
+    delKey.button.classList.add('keyboard__key--held');
   } else if (keyCode === 'MetaLeft' || keyCode === 'MetaRight') {
     if (keyCode === 'MetaLeft') {
-      leftCmdKey.button.classList.add('keyboard__key--pressed');
+      leftCmdKey.button.classList.add('keyboard__key--held');
     } else {
-      rightCmdKey.button.classList.add('keyboard__key--pressed');
+      rightCmdKey.button.classList.add('keyboard__key--held');
     }
   } else if (keyCode === 'ShiftLeft' || keyCode === 'ShiftRight') {
     if (keyCode === 'ShiftLeft') {
-      leftShiftKey.button.classList.add('keyboard__key--pressed');
+      leftShiftKey.button.classList.add('keyboard__key--held');
     } else {
-      rightShiftKey.button.classList.add('keyboard__key--pressed');
+      rightShiftKey.button.classList.add('keyboard__key--held');
     }
     keys.forEach((key) => key.setShiftLetters(language));
     if (lowerCase) {
@@ -331,7 +331,7 @@ document.addEventListener('keydown', (event) => {
     }
   } else if (code.includes(keyCode)) {
     const selectedKey = keys.filter((key) => key.code === keyCode);
-    selectedKey[0].button.classList.add('keyboard__key--pressed');
+    selectedKey[0].button.classList.add('keyboard__key--held');
     const start = textArea.selectionStart;
     const end = textArea.selectionEnd;
     const textStart = textAreaText.substring(0, start);
@@ -350,7 +350,7 @@ document.addEventListener('keydown', (event) => {
     }
     keys.forEach((button) => {
       button.setTextLanguage(language);
-      if (capsLockKey.button.classList.contains('keyboard__key--pressed')) {
+      if (capsLockKey.button.classList.contains('keyboard__key--held')) {
         keys.forEach((keyboardButton) => keyboardButton.setCase('upper'));
       }
     });
@@ -361,32 +361,32 @@ document.addEventListener('keydown', (event) => {
 document.addEventListener('keyup', (event) => {
   const keyCode = event.code;
   if (keyCode === 'ControlLeft') {
-    leftCtrlKey.button.classList.remove('keyboard__key--pressed');
+    leftCtrlKey.button.classList.remove('keyboard__key--held');
   } else if (keyCode === 'AltLeft' || keyCode === 'AltRight') {
     if (keyCode === 'AltLeft') {
-      leftAltKey.button.classList.remove('keyboard__key--pressed');
+      leftAltKey.button.classList.remove('keyboard__key--held');
     } else if (keyCode === 'AltRight') {
-      rightAltKey.button.classList.remove('keyboard__key--pressed');
+      rightAltKey.button.classList.remove('keyboard__key--held');
     }
   } else if (keyCode === 'Backspace') {
-    backSpaceKey.button.classList.remove('keyboard__key--pressed');
+    backSpaceKey.button.classList.remove('keyboard__key--held');
   } else if (keyCode === 'Enter') {
-    enterKey.button.classList.remove('keyboard__key--pressed');
+    enterKey.button.classList.remove('keyboard__key--held');
   } else if (keyCode === 'Tab') {
-    tabKey.button.classList.remove('keyboard__key--pressed');
+    tabKey.button.classList.remove('keyboard__key--held');
   } else if (keyCode === 'Delete') {
-    delKey.button.classList.remove('keyboard__key--pressed');
+    delKey.button.classList.remove('keyboard__key--held');
   } else if (keyCode === 'MetaLeft' || keyCode === 'MetaRight') {
     if (keyCode === 'MetaLeft') {
-      leftCmdKey.button.classList.remove('keyboard__key--pressed');
+      leftCmdKey.button.classList.remove('keyboard__key--held');
     } else {
-      rightCmdKey.button.classList.remove('keyboard__key--pressed');
+      rightCmdKey.button.classList.remove('keyboard__key--held');
     }
   } else if (keyCode === 'ShiftLeft' || keyCode === 'ShiftRight') {
     if (keyCode === 'ShiftLeft') {
-      leftShiftKey.button.classList.remove('keyboard__key--pressed');
+      leftShiftKey.button.classList.remove('keyboard__key--held');
     } else {
-      rightShiftKey.button.classList.remove('keyboard__key--pressed');
+      rightShiftKey.button.classList.remove('keyboard__key--held');
     }
     keys.forEach((key) => key.setTextLanguage(language));
     if (lowerCase) {
@@ -398,7 +398,7 @@ document.addEventListener('keyup', (event) => {
     }
   } else if (code.includes(keyCode) && keyCode !== 'CapsLock') {
     const selectedKey = keys.filter((key) => key.code === keyCode);
-    selectedKey[0].button.classList.remove('keyboard__key--pressed');
+    selectedKey[0].button.classList.remove('keyboard__key--held');
   }
 });
 

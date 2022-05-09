@@ -79,7 +79,6 @@ p {
   outline: none;
   background-color: #023c89;
   cursor: pointer;
-  animation: button-grow 0.3s forwards;
   transition: all 0.3s;
 }
 
@@ -122,12 +121,14 @@ p {
   }
 }
 
-.keyboard__key--pressed {
-  animation: button-shrink 0.3s forwards;
-}
-
 .keyboard__key--held {
   transform: scale(0.9);
   background-color: #a72cb7;
   transition: all 0.3s;
 }
+
+.keyboard__key--pressed {
+  animation: button-shrink 0.3s forwards;
+}
+
+
